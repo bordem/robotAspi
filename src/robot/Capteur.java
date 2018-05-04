@@ -1,7 +1,6 @@
 package robot;
 
 public class Capteur {
-
     private boolean detect;
 
     public Capteur(){
