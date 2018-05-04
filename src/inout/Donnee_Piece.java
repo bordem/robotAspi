@@ -1,9 +1,9 @@
 package inout;
 
 public class Donnee_Piece {
+
     private String[][] piece;
-    public Donnee_Piece(String [][] piece){
-        this.piece = piece;
+    public Donnee_Piece(){
     }
 
     public void setPiece(String[][] piece) {
@@ -21,4 +21,5 @@ public class Donnee_Piece {
     public String getSpecificObject(int x, int y){
         return piece[x][y];
     }
+
 }
