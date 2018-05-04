@@ -10,31 +10,56 @@ import java.beans.PropertyChangeSupport;
 public class Batterie {
 
     private PropertyChangeSupport nPcs=new PropertyChangeSupport(this);
-    private int capaciteMax;
-    private int capaciteActuelle;
+    private double capaciteMax;
+    private double capaciteActuelle;
 
-    public Batterie(int capacite){
+    public Batterie(double capacite){
         capaciteMax=capaciteActuelle=capacite;
     }
 
-    public int getCapaciteActuelle() {
+    public double getCapaciteActuelle() {
         return capaciteActuelle;
     }
-    public int getCapaciteMax() {
+    public double getCapaciteMax() {
         return capaciteMax;
     }
 
-    public void setCapaciteActuelle(int consommation) {
-        if(verification(consommation))
-            this.capaciteActuelle -= consommation;
+    public void rechargerBatterie(){
+        capaciteMax=100;
+        capaciteActuelle=capaciteMax;
+    }
+
+    public void consommation_normale(){
+        if(verification(1))
+            this.capaciteActuelle -= 1;
         else{
-            int oldCapa = capaciteActuelle;
+            double oldCapa = capaciteActuelle;
+            capaciteActuelle=0;
+            nPcs.firePropertyChange("ArretRobot",oldCapa, capaciteActuelle);
+        }
+    }
+    public void consommation_obstacle(){
+        if(verification(1.5))
+            this.capaciteActuelle -= 1.5;
+        else{
+            double oldCapa = capaciteActuelle;
+            capaciteActuelle=0;
+            nPcs.firePropertyChange("ArretRobot",oldCapa, capaciteActuelle);
+        }
+    }
+    public void consommation_virage(){
+        if(verification(2.0))
+            this.capaciteActuelle -= 2.0;
+        else{
+            double oldCapa = capaciteActuelle;
             capaciteActuelle=0;
             nPcs.firePropertyChange("ArretRobot",oldCapa, capaciteActuelle);
         }
     }
 
-    public boolean verification(int consommation){
+
+
+    public boolean verification(double consommation){
         if((capaciteActuelle-consommation)<=0)
             return false;
         else
@@ -45,8 +70,7 @@ public class Batterie {
     {
         nPcs.addPropertyChangeListener(listener);
     }
-    public void removePropertyChangeSupportListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeSupportListener(PropertyChangeListener listener) {
         nPcs.removePropertyChangeListener(listener);
     }
 

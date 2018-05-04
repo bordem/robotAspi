@@ -16,7 +16,7 @@ public class Robot implements Runnable{
     private Reserve reserve;
     private Thread thread;
     //private deplacement depla;
-    //private Capteur[] capteurs = new Capteur[4];
+    private Capteur[] capteurs = new Capteur[4];
 
     public Robot(Reserve reserve1, Batterie batterie1){
         actif=rempli=false;
