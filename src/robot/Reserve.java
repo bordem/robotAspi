@@ -29,7 +29,13 @@ public class Reserve {
     {
         nPcs.removePropertyChangeListener(listener);
     }
-
+    private boolean verification(int aspiration)
+    {
+        if((reserveActuelle-aspiration)>=reserveMax)
+            return false;
+        else
+            return true;
+    }
 
 
 }
