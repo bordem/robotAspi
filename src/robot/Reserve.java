@@ -36,6 +36,9 @@ public class Reserve {
         else
             return true;
     }
+    public void viderReseve(){
+        this.reserveActuelle=0;
+    }
 
 
 }

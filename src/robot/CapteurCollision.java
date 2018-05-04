@@ -1,4 +1,4 @@
 package robot;
 
-public class CapteurCollision {
+public class CapteurCollision extends Capteur {
 }

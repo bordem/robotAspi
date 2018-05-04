@@ -8,15 +8,12 @@ import java.beans.PropertyChangeListener;
  */
 
 public class Robot implements Runnable{
-    //public enum deplacement{
-    //    HAUT,BAS,GAUCHE,DROITE;
-    //}
     private boolean actif,rempli;
     private Batterie batterie;
     private Reserve reserve;
     private Thread thread;
-    //private deplacement depla;
-    //private Capteur[] capteurs = new Capteur[4];
+    private DirectionDeplacement depla;
+    private Capteur[] capteurs = new Capteur[4];
 
     public Robot(Reserve reserve1, Batterie batterie1){
         actif=rempli=false;
@@ -40,9 +37,8 @@ public class Robot implements Runnable{
     }
 
     public Reserve getReserve(){return reserve;}
-    public Batterie getBatterie(){
-        return batterie;
-    }
+    public Batterie getBatterie(){return batterie;}
+
 
     @Override
     public void run(){

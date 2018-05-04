@@ -1,4 +1,5 @@
 package robot;
 
-public class CapteurVide {
+public class CapteurVide extends Capteur{
+
 }
