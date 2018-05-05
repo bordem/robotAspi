@@ -1,5 +1,7 @@
 package robot;
 
+import robot.cartographie.Carte;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -14,8 +16,10 @@ public class Robot implements Runnable{
     private Thread thread;
     private DirectionDeplacement depla;
     private Capteur[] capteurs = new Capteur[4];
+    private Carte cartographie;
 
     public Robot(Reserve reserve1, Batterie batterie1){
+        cartographie=new Carte();
         actif=rempli=false;
         batterie=batterie1;
         reserve=reserve1;
@@ -39,7 +43,17 @@ public class Robot implements Runnable{
     public Reserve getReserve(){return reserve;}
     public Batterie getBatterie(){return batterie;}
 
-
+    private void Topologie(int posY, int posX, String zone){
+        if(zone.charAt(0)=='0' || zone.charAt(0)=='T' ){
+            cartographie.setInformation(posY,posX,false);
+        }
+        else{
+            cartographie.setInformation(posY,posX,true);
+        }
+    }
+    public Carte getCartographie(){
+        return cartographie;
+    }
     @Override
     public void run(){
     }

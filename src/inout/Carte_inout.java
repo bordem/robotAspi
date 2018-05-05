@@ -1,13 +1,17 @@
 package inout;
 
+import robot.cartographie.Carte;
 
 import java.io.*;
 import java.util.ArrayList;
 
-public class Piece_in {
-    final File f =new File("ressource/piece.txt");
-    private String[][] array;
-    public Piece_in() {
+public class Carte_inout {
+    private final File f=new File("ressource/carte.txt");
+    private Carte carte;
+    public Carte_inout(){
+
+    }
+    public void recupererCarte(){
         ArrayList<ArrayList<String>> listeString = new ArrayList<ArrayList<String>>();
         if (f.exists()) {
             try {
@@ -22,7 +26,6 @@ public class Piece_in {
                     ArrayList<String> tempo = new ArrayList<String>();
                     for (int i = 0; i < ligne.length(); i=i+3) {
                         chaine = ligne.substring(i, i+1);
-                        chaine = chaine +ligne.substring(i + 1, i + 2);
                         tempo.add(chaine);
                         ncolonne++;
                     }
@@ -41,16 +44,26 @@ public class Piece_in {
             System.out.println("Le fichier est inexistant");
         }
     }
-    private void transformerListe(ArrayList<ArrayList<String>> listeString ){
-        array = new String[listeString.size()][listeString.get(0).size()];
+    public void transformerListe(ArrayList<ArrayList<String>> listeString){
+
         for(int i=0; i<listeString.size(); i++){
             for(int j=0; j<listeString.get(i).size();j++){
-                array[i][j]=listeString.get(i).get(j);
+                if(listeString.get(i).get(j).charAt(0)=='1' ){
+                    carte.setInformation(i,j,true);
+                }
+                else if(listeString.get(i).get(j).charAt(0)=='0' ){
+                    carte.setInformation(i,j,false);
+                }
+                //Sinon erreur
             }
         }
     }
 
-    public String[][] getArray() {
-        return array;
+    public Carte getCarte() {
+        return carte;
+    }
+
+    public void setCarte(Carte carte){
+        this.carte=carte;
     }
 }

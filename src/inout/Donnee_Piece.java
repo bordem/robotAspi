@@ -11,6 +11,7 @@ public class Donnee_Piece {
     }
 
     public void setPosition(String objet, int x, int y){
+        this.piece[x][y]=new String();
         this.piece[x][y]=objet;
     }
 
@@ -22,4 +23,16 @@ public class Donnee_Piece {
         return piece[x][y];
     }
 
+    public void afficherPiece(){
+       int i =0,j=0;
+       for(String[] ligne : piece){
+
+           for(String colonne : ligne){
+               System.out.print(colonne);
+               j++;
+           }
+           System.out.println();
+           i++;
+       }
+    }
 }

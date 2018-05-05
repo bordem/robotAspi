@@ -1,3 +1,4 @@
+import inout.Donnee_Piece;
 import robot.Capteur;
 import robot.Robot;
 
@@ -12,9 +13,10 @@ public class Base {
     //La base a un capteur de présence du robot.
     //Ce capteur est actif tant que le robot est positionné dessus.
     private CapteurBase capteur;
-
-    public Base(CapteurBase cap) {
+    private Donnee_Piece piece;
+    public Base(CapteurBase cap, Donnee_Piece piece) {
         capteur = cap;
+        this.piece=piece;
     }
 
     public void rechargerRobot(Robot robot) {
