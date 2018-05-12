@@ -8,9 +8,7 @@ import java.util.ArrayList;
 public class Carte_inout {
     private final File f=new File("ressource/carte.txt");
     private Carte carte;
-    public Carte_inout(){
-
-    }
+    public Carte_inout(){ }
     public void recupererCarte(){
         ArrayList<ArrayList<String>> listeString = new ArrayList<ArrayList<String>>();
         if (f.exists()) {

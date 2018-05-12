@@ -1,5 +1,4 @@
 import inout.Donnee_Piece;
-import robot.Capteur;
 import robot.Robot;
 
 /*

@@ -14,4 +14,8 @@ public class Carte {
     public void setInformation(int ligne, int colonne, boolean obstacle){
             carte[ligne][colonne]=obstacle;
     }
+
+    public Boolean[][] getCarte() {
+        return carte;
+    }
 }
