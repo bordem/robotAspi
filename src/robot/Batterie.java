@@ -56,6 +56,15 @@ public class Batterie {
             nPcs.firePropertyChange("ArretRobot",oldCapa, capaciteActuelle);
         }
     }
+    public void consommation_virage_sol(){
+        if(verification(2.5)) {
+            this.capaciteActuelle -= 2.5;
+        }else{
+                double oldCapa = capaciteActuelle;
+                capaciteActuelle=0;
+                nPcs.firePropertyChange("ArretRobot",oldCapa, capaciteActuelle);
+        }
+    }
 
 
 

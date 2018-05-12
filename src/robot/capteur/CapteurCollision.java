@@ -19,14 +19,11 @@ public class CapteurCollision extends Capteur {
         boolean temporaire;
         if(piece[x][y].charAt(0)=='O') {
             temporaire = detect;
-
             nPcs.firePropertyChange("Collision", temporaire, detect);
         }
         else {
             detect = false;
         }
-
-
     }
 
 
