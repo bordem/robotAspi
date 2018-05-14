@@ -19,9 +19,9 @@ public abstract class Capteur {
     public void detecteur( Direction direction){
         switch(direction)
         {
-            case BAS:  setDetect(robot.getX(), robot.getY()-1, robot.getPiece());
+            case BAS:  setDetect(robot.getX(), robot.getY()+1, robot.getPiece());
                 break;
-            case HAUT: setDetect(robot.getX(), robot.getY()+1, robot.getPiece());
+            case HAUT: setDetect(robot.getX(), robot.getY()-1, robot.getPiece());
                 break;
             case DROITE: setDetect(robot.getX()+1, robot.getY(), robot.getPiece());
                 break;

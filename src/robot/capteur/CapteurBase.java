@@ -1,7 +1,8 @@
-package sol;
+package robot.capteur;
 
 import robot.Robot;
 import robot.capteur.Capteur;
+import sol.Sol;
 
 public class CapteurBase extends Capteur{
     //Ce capteur est actif tant que le robot est positionné dessus

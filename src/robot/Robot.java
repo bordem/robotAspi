@@ -25,7 +25,7 @@ public class Robot implements Runnable{
     private CapteurVide vide;
     private Carte cartographie;
     private Sol[][] piece;
-    private int posX,posY;
+    private int posX,posY, nb_deplacement=0;
     private Direction orientation;
 
     public Robot(Reserve reserve1, Batterie batterie1, Sol[][] piece){
@@ -33,10 +33,27 @@ public class Robot implements Runnable{
         collision = new CapteurCollision(this);
         vide = new CapteurVide(this);
         cartographie=new Carte();
-        actif=rempli=false;
+        actif=true;
         batterie=batterie1;
         reserve=reserve1;
-        refuser=false;
+        refuser=rempli=false;
+        for(int i=0; i < piece.length;i++ )
+        {
+            boolean verif =false;
+            for(int j=0; j< piece[i].length; j++){
+                if(piece[i][j].getSol()==typeSol.BASE)
+                {
+                    posX=j;
+                    posY=i;
+                    verif=true;
+                    break;
+                }
+            }
+            if(verif = true){
+                break;
+            }
+        }
+        System.out.println("X "+posX+" Y "+posY);
         batterie.addPropertyChangeSupportListener(new PropertyChangeListener(){
             @Override
             public void propertyChange(PropertyChangeEvent evt){
@@ -77,26 +94,30 @@ public class Robot implements Runnable{
     public Batterie getBatterie(){return batterie;}
 
 
-    public void DeplacerRobot(Direction direction){
+    public void deplacerRobot(Direction direction){
         Sol memoire = piece[posX][posY];
-
+        int tempoX, tempoY;
+        System.out.println("coucou");
         collision.detecteur(direction);
         vide.detecteur(direction);
-
         if(!refuser) {
             if (actif) {
                 switch (direction) {
                     case BAS:
-                        posY--;
+                        posY++;
+                        System.out.println("Bas "+posY);
                         break;
                     case HAUT:
-                        posY++;
+                        posY--;
+                        System.out.println("Haut "+posY);
                         break;
                     case DROITE:
                         posX++;
+                        System.out.println("Droite "+posX);
                         break;
                     case GAUCHE:
                         posX--;
+                        System.out.println("gauche "+posX);
                         break;
                 }
                 if (!rempli) {
@@ -116,6 +137,7 @@ public class Robot implements Runnable{
                 }
                 orientation = direction;
                 cartographie.setInformation(posX, posY, false);
+                nb_deplacement++;
             }
         }
         else{
@@ -167,6 +189,9 @@ public class Robot implements Runnable{
         return posX;
     }
 
+    public int getNb_deplacement(){
+        return nb_deplacement;
+    }
     public int getY(){
         return posY;
     }

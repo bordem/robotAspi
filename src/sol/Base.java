@@ -2,6 +2,7 @@ package sol;
 
 import inout.Donnee_Piece;
 import robot.Robot;
+import robot.capteur.CapteurBase;
 
 /*
  La base est le point de départ du robot dans la pièce.

@@ -1,6 +1,7 @@
 import inout.Donnee_Piece;
 import inout.Piece_in;
 import robot.Batterie;
+import robot.Direction;
 import robot.Reserve;
 import robot.Robot;
 import sol.Sol;
@@ -19,6 +20,7 @@ public class Main {
                 sol[i][j] = new Sol(piece.getPiece()[i][j]);
                 sol[i][j].afficherSol();
             }
+            System.out.println("");
         }
         Robot robot = new Robot(new Reserve(100),new Batterie(100), sol);
     }
