@@ -10,22 +10,20 @@ import java.beans.PropertyChangeSupport;
 public class Batterie {
 
     private PropertyChangeSupport nPcs=new PropertyChangeSupport(this);
-    private double capaciteMax;
+    private final double capaciteMax;
     private double capaciteActuelle;
 
-    public Batterie(double capacite){
-        capaciteMax=capaciteActuelle=capacite;
+    public Batterie(){
+        capaciteMax=100;
+        capaciteActuelle=100;
     }
 
     public double getCapaciteActuelle() {
         return capaciteActuelle;
     }
-    public double getCapaciteMax() {
-        return capaciteMax;
-    }
+    public double getCapaciteMax() {return capaciteMax;}
 
     public void rechargerBatterie(){
-        capaciteMax=100;
         capaciteActuelle=capaciteMax;
     }
 
@@ -59,7 +57,7 @@ public class Batterie {
 
 
 
-    public boolean verification(double consommation){
+    private boolean verification(double consommation){
         if((capaciteActuelle-consommation)<=0)
             return false;
         else

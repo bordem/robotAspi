@@ -23,7 +23,7 @@ public class Robot implements Runnable{
             @Override
             public void propertyChange(PropertyChangeEvent evt){
                 actif=false;
-                //fonction qui va eteindre le robot
+                //fonction qui va éteindre le robot
             }
         });
         reserve.addPropertyChangeSupportListener(new PropertyChangeListener(){
