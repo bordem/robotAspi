@@ -1,3 +1,4 @@
+package sol;
 
 import robot.capteur.Capteur;
 

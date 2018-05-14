@@ -1,3 +1,5 @@
+package sol;
+
 import inout.Donnee_Piece;
 import robot.Robot;
 

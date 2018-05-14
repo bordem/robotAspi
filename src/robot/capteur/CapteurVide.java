@@ -2,6 +2,8 @@ package robot.capteur;
 
 import robot.Direction;
 import robot.Robot;
+import sol.Sol;
+import sol.typeSol;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -15,9 +17,9 @@ public class CapteurVide extends Capteur {
 
 
     @Override
-    protected void setDetect(int x, int y, String[][] piece) {
+    protected void setDetect(int x, int y, Sol[][] piece) {
         boolean temporaire;
-        if(piece[x][y].charAt(0)=='V'){
+        if(piece[x][y].getSol()== typeSol.VIDE){
             temporaire = detect;
             detect = temporaire;
             nPcs.firePropertyChange("Collision", temporaire, detect);

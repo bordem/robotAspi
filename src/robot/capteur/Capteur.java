@@ -2,6 +2,7 @@ package robot.capteur;
 
 import robot.Direction;
 import robot.Robot;
+import sol.Sol;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -29,7 +30,7 @@ public abstract class Capteur {
         }
     }
 
-    protected abstract void setDetect(int x, int y, String[][] piece);
+    protected abstract void setDetect(int x, int y, Sol[][] piece);
     public void addPropertyChangeSupportListener(PropertyChangeListener listener)
     {
         nPcs.addPropertyChangeListener(listener);

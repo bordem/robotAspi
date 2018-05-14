@@ -1,9 +1,12 @@
 package robot;
 
+import com.sun.prism.shader.Solid_ImagePattern_AlphaTest_Loader;
 import robot.capteur.Capteur;
 import robot.capteur.CapteurCollision;
 import robot.capteur.CapteurVide;
 import robot.cartographie.Carte;
+import sol.Sol;
+import sol.typeSol;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -21,11 +24,11 @@ public class Robot implements Runnable{
     private CapteurCollision collision;
     private CapteurVide vide;
     private Carte cartographie;
-    private String[][] piece;
+    private Sol[][] piece;
     private int posX,posY;
     private Direction orientation;
 
-    public Robot(Reserve reserve1, Batterie batterie1, String[][] piece){
+    public Robot(Reserve reserve1, Batterie batterie1, Sol[][] piece){
         this.piece=piece;
         collision = new CapteurCollision(this);
         vide = new CapteurVide(this);
@@ -75,11 +78,11 @@ public class Robot implements Runnable{
 
 
     public void DeplacerRobot(Direction direction){
-        String memoire = piece[posX][posY];
-        String nombre = memoire.substring(1,2);
+        Sol memoire = piece[posX][posY];
+
         collision.detecteur(direction);
         vide.detecteur(direction);
-        int aspire = Integer.parseInt(nombre);
+
         if(!refuser) {
             if (actif) {
                 switch (direction) {
@@ -97,14 +100,14 @@ public class Robot implements Runnable{
                         break;
                 }
                 if (!rempli) {
-                    aspirer(aspire);
+                    aspirer(memoire.getEpaisseurPoussiere());
                 }
-                if (memoire.charAt(0) == 'T') {
+                if (memoire.getSol()== typeSol.TAPIS) {
                     if (orientation == direction) {
                         batterie.consommation_obstacle();
                     } else
                         batterie.consommation_virage_sol();
-                } else if (memoire.charAt(0) == '0') {
+                } else if (memoire.getSol()==typeSol.NORMAL) {
                     if (orientation == direction) {
                         batterie.consommation_normale();
                     } else {
@@ -118,18 +121,19 @@ public class Robot implements Runnable{
         else{
             switch (direction) {
                 case BAS:
-                    cartographie.setInformation(posX, posY-1, false);
+                    posY--;
                     break;
                 case HAUT:
-                    cartographie.setInformation(posX, posY+1, false);
+                    posY++;
                     break;
                 case DROITE:
-                    cartographie.setInformation(posX+1, posY, false);
+                    posX++;
                     break;
                 case GAUCHE:
-                    cartographie.setInformation(posX-1, posY, false);
+                    posX--;
                     break;
             }
+            cartographie.setInformation(posX, posY, true);
             refuser = true;
         }
     }
@@ -155,7 +159,7 @@ public class Robot implements Runnable{
         return cartographie;
     }
 
-    public String[][] getPiece() {
+    public Sol[][] getPiece() {
         return piece;
     }
 
