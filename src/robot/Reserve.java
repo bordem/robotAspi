@@ -39,6 +39,4 @@ public class Reserve {
     public void viderReseve(){
         this.reserveActuelle=0;
     }
-
-
 }

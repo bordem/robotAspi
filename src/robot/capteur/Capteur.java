@@ -28,7 +28,7 @@ public abstract class Capteur {
                 break;
         }
     }
-
+    public boolean getDetect(){return detect;}
     protected abstract void setDetect(int x, int y, String[][] piece);
     public void addPropertyChangeSupportListener(PropertyChangeListener listener)
     {
