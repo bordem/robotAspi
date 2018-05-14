@@ -2,6 +2,7 @@ package robot.capteur;
 
 import robot.Direction;
 import robot.Robot;
+import sol.Sol;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -18,9 +19,9 @@ public abstract class Capteur {
     public void detecteur( Direction direction){
         switch(direction)
         {
-            case BAS:  setDetect(robot.getX(), robot.getY()-1, robot.getPiece());
+            case BAS:  setDetect(robot.getX(), robot.getY()+1, robot.getPiece());
                 break;
-            case HAUT: setDetect(robot.getX(), robot.getY()+1, robot.getPiece());
+            case HAUT: setDetect(robot.getX(), robot.getY()-1, robot.getPiece());
                 break;
             case DROITE: setDetect(robot.getX()+1, robot.getY(), robot.getPiece());
                 break;
@@ -28,8 +29,8 @@ public abstract class Capteur {
                 break;
         }
     }
-    public boolean getDetect(){return detect;}
-    protected abstract void setDetect(int x, int y, String[][] piece);
+
+    protected abstract void setDetect(int x, int y, Sol[][] piece);
     public void addPropertyChangeSupportListener(PropertyChangeListener listener)
     {
         nPcs.addPropertyChangeListener(listener);

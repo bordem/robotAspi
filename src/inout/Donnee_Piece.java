@@ -26,7 +26,6 @@ public class Donnee_Piece {
     public void afficherPiece(){
        int i =0,j=0;
        for(String[] ligne : piece){
-
            for(String colonne : ligne){
                System.out.print(colonne);
                j++;

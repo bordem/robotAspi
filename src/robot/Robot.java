@@ -1,9 +1,12 @@
 package robot;
 
+import com.sun.prism.shader.Solid_ImagePattern_AlphaTest_Loader;
 import robot.capteur.Capteur;
 import robot.capteur.CapteurCollision;
 import robot.capteur.CapteurVide;
 import robot.cartographie.Carte;
+import sol.Sol;
+import sol.typeSol;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -21,19 +24,36 @@ public class Robot implements Runnable{
     private CapteurCollision collision;
     private CapteurVide vide;
     private Carte cartographie;
-    private String[][] piece;
-    private int posX,posY;
+    private Sol[][] piece;
+    private int posX,posY, nb_deplacement=0;
     private Direction orientation;
 
-    public Robot(Reserve reserve1, Batterie batterie1, String[][] piece){
+    public Robot(Reserve reserve1, Batterie batterie1, Sol[][] piece){
         this.piece=piece;
         collision = new CapteurCollision(this);
         vide = new CapteurVide(this);
         cartographie=new Carte();
-        actif=rempli=false;
+        actif=true;
         batterie=batterie1;
         reserve=reserve1;
-        refuser=false;
+        refuser=rempli=false;
+        for(int i=0; i < piece.length;i++ )
+        {
+            boolean verif =false;
+            for(int j=0; j< piece[i].length; j++){
+                if(piece[i][j].getSol()==typeSol.BASE)
+                {
+                    posX=j;
+                    posY=i;
+                    verif=true;
+                    break;
+                }
+            }
+            if(verif = true){
+                break;
+            }
+        }
+        System.out.println("X "+posX+" Y "+posY);
         batterie.addPropertyChangeSupportListener(new PropertyChangeListener(){
             @Override
             public void propertyChange(PropertyChangeEvent evt){
@@ -74,37 +94,41 @@ public class Robot implements Runnable{
     public Batterie getBatterie(){return batterie;}
 
 
-    public void DeplacerRobot(Direction direction){
-        String memoire = piece[posX][posY];
-        String nombre = memoire.substring(1,2);
+    public void deplacerRobot(Direction direction){
+        Sol memoire = piece[posX][posY];
+        int tempoX, tempoY;
+        System.out.println("coucou");
         collision.detecteur(direction);
         vide.detecteur(direction);
-        int aspire = Integer.parseInt(nombre);
         if(!refuser) {
             if (actif) {
                 switch (direction) {
                     case BAS:
-                        posY--;
+                        posY++;
+                        System.out.println("Bas "+posY);
                         break;
                     case HAUT:
-                        posY++;
+                        posY--;
+                        System.out.println("Haut "+posY);
                         break;
                     case DROITE:
                         posX++;
+                        System.out.println("Droite "+posX);
                         break;
                     case GAUCHE:
                         posX--;
+                        System.out.println("gauche "+posX);
                         break;
                 }
                 if (!rempli) {
-                    aspirer(aspire);
+                    aspirer(memoire.getEpaisseurPoussiere());
                 }
-                if (memoire.charAt(0) == 'T') {
+                if (memoire.getSol()== typeSol.TAPIS) {
                     if (orientation == direction) {
                         batterie.consommation_obstacle();
                     } else
                         batterie.consommation_virage_sol();
-                } else if (memoire.charAt(0) == '0') {
+                } else if (memoire.getSol()==typeSol.NORMAL) {
                     if (orientation == direction) {
                         batterie.consommation_normale();
                     } else {
@@ -113,23 +137,25 @@ public class Robot implements Runnable{
                 }
                 orientation = direction;
                 cartographie.setInformation(posX, posY, false);
+                nb_deplacement++;
             }
         }
         else{
             switch (direction) {
                 case BAS:
-                    cartographie.setInformation(posX, posY-1, false);
+                    posY--;
                     break;
                 case HAUT:
-                    cartographie.setInformation(posX, posY+1, false);
+                    posY++;
                     break;
                 case DROITE:
-                    cartographie.setInformation(posX+1, posY, false);
+                    posX++;
                     break;
                 case GAUCHE:
-                    cartographie.setInformation(posX-1, posY, false);
+                    posX--;
                     break;
             }
+            cartographie.setInformation(posX, posY, true);
             refuser = true;
         }
     }
@@ -155,7 +181,7 @@ public class Robot implements Runnable{
         return cartographie;
     }
 
-    public String[][] getPiece() {
+    public Sol[][] getPiece() {
         return piece;
     }
 
@@ -163,6 +189,9 @@ public class Robot implements Runnable{
         return posX;
     }
 
+    public int getNb_deplacement(){
+        return nb_deplacement;
+    }
     public int getY(){
         return posY;
     }

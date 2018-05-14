@@ -1,6 +1,12 @@
+package sol;
+
 import inout.Donnee_Piece;
 import robot.Robot;
+<<<<<<< HEAD:src/Base.java
 import robot.capteur.*;
+=======
+import robot.capteur.CapteurBase;
+>>>>>>> 000bd8ce2b7e89113889f7a138981c124cb3ff97:src/sol/Base.java
 
 /*
  La base est le point de départ du robot dans la pièce.
@@ -22,15 +28,23 @@ public class Base {
 
     public void rechargerRobot(Robot robot) {
         //Il faut 5 secondes pour recharger le robot
+<<<<<<< HEAD:src/Base.java
         /*if (capteur.getDetect() == true) {
             robot.getBatterie().rechargerBatterie();
         }*/
+=======
+
+>>>>>>> 000bd8ce2b7e89113889f7a138981c124cb3ff97:src/sol/Base.java
 
     }
     public void viderReservoir(Robot robot) {
         //Il faut 2 seconde pour recharger le robot
+<<<<<<< HEAD:src/Base.java
         /*if (capteur.getDetect() == true) {
             robot.getReserve().viderReseve();
         }*/
+=======
+
+>>>>>>> 000bd8ce2b7e89113889f7a138981c124cb3ff97:src/sol/Base.java
     }
 }
