@@ -1,17 +1,17 @@
 package sol;
 
 public class Sol {
-
+    private String zone;
     private typeSol sol;
     private int epaisseurPoussiere;
 
-    public Sol(typeSol type,int epaisseur){
-        this.sol=type;
-        this.epaisseurPoussiere=epaisseur;
+    public Sol(String chaine){
+        zone=chaine;
+        toSol();
     }
 
-     public void toSol(String zone){
-         String  nombre = zone.substring(1,2);
+     public void toSol(){
+         String  nombre = zone.substring(1);
          int aspire;
          if(zone != null){
              switch (zone.charAt(0)){
@@ -25,9 +25,32 @@ public class Sol {
                  case '0': sol=typeSol.NORMAL;
                        epaisseurPoussiere=Integer.parseInt(nombre);
                      break;
+                 case 'B': sol=typeSol.BASE;
+                     break;
              }
          }
      }
+
+    public void afficherSol(){
+        switch (sol){
+            case VIDE:
+                System.out.print("vide ");
+                break;
+            case OBSTACLE:
+                System.out.print("obstacle ");
+                break;
+            case NORMAL:
+                System.out.print("normal ");
+                break;
+            case TAPIS:
+                System.out.print("tapis ");
+                break;
+            case BASE:
+                System.out.print("base ");
+                break;
+        }
+    }
+
 
     public typeSol getSol() {
         return sol;

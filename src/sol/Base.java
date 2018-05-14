@@ -22,15 +22,11 @@ public class Base {
 
     public void rechargerRobot(Robot robot) {
         //Il faut 5 secondes pour recharger le robot
-        if (capteur.getEtat() == true) {
-            //robot.getBatterie().rechargerBatterie();
-        }
+
 
     }
     public void viderReservoir(Robot robot) {
         //Il faut 2 seconde pour recharger le robot
-        if (capteur.getEtat() == true) {
-            robot.getReserve().viderReseve();
-        }
+
     }
 }

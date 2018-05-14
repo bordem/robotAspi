@@ -1,5 +1,6 @@
 package sol;
 
+import robot.Robot;
 import robot.capteur.Capteur;
 
 public class CapteurBase extends Capteur{
@@ -9,12 +10,13 @@ public class CapteurBase extends Capteur{
     //Quand le robot revient de la base, on écrit la topologie de la piece dans un fichier
 
 
-    public CapteurBase()
+    public CapteurBase(Robot robot)
     {
-
+        super(robot);
     }
 
-
+    @Override
+    protected void setDetect(int x, int y, Sol[][] piece){}
 
 
 
