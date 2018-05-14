@@ -1,4 +1,4 @@
-import robot.Capteur;
+import inout.Donnee_Piece;
 import robot.Robot;
 
 /*
@@ -11,22 +11,23 @@ import robot.Robot;
 public class Base {
     //La base a un capteur de présence du robot.
     //Ce capteur est actif tant que le robot est positionné dessus.
-    private Capteur capteur;
-
-    public Base(Capteur cap) {
+    private CapteurBase capteur;
+    private Donnee_Piece piece;
+    public Base(CapteurBase cap, Donnee_Piece piece) {
         capteur = cap;
+        this.piece=piece;
     }
 
     public void rechargerRobot(Robot robot) {
         //Il faut 5 secondes pour recharger le robot
-        if (capteur.getEtat()) {
-            robot.getBatterie().rechargerBatterie();
+        if (capteur.getEtat() == true) {
+            //robot.getBatterie().rechargerBatterie();
         }
 
     }
     public void viderReservoir(Robot robot) {
         //Il faut 2 seconde pour recharger le robot
-        if (capteur.getEtat()) {
+        if (capteur.getEtat() == true) {
             robot.getReserve().viderReseve();
         }
     }
