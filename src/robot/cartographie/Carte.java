@@ -12,7 +12,6 @@ public class Carte {
 
     public void setInformation(int ligne, int colonne, boolean obstacle){
         carte[ligne][colonne]=new Boolean(obstacle);
-        System.out.println("erferzstrh "+ carte[ligne][colonne]);
     }
 
     public Boolean[][] getCarte() {

@@ -7,7 +7,7 @@ import robot.Robot;
 import sol.Sol;
 
 public class Main {
-    public static void main(String[] args){
+   /* public static void main(String[] args){
         Piece_in piece_in = new Piece_in();
         Donnee_Piece piece = new Donnee_Piece();
         piece.setPiece( piece_in.getArray() );
@@ -22,6 +22,10 @@ public class Main {
             }
             System.out.println("");
         }
-        Robot robot = new Robot(new Reserve(100),new Batterie(100), sol);
-    }
+        Robot robot = new Robot(new Reserve(100),new Batterie(), sol);
+        robot.deplacerRobot(Direction.BAS);
+        robot.deplacerRobot(Direction.DROITE);
+        robot.deplacerRobot(Direction.DROITE);
+        robot.retournerBase();
+    }*/
 }

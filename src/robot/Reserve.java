@@ -21,6 +21,9 @@ public class Reserve {
         nPcs.firePropertyChange("ReserveMaJ", oldReserve, reserveActuelle);
     }
 
+    public void viderReserve(){
+        reserveActuelle=0;
+    }
     public void addPropertyChangeSupportListener(PropertyChangeListener listener)
     {
         nPcs.addPropertyChangeListener(listener);
@@ -36,7 +39,5 @@ public class Reserve {
         else
             return true;
     }
-    public void viderReseve(){
-        this.reserveActuelle=0;
-    }
+
 }

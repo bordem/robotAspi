@@ -2,6 +2,7 @@ package robot;
 
 import com.sun.prism.shader.Solid_ImagePattern_AlphaTest_Loader;
 import robot.capteur.Capteur;
+import robot.capteur.CapteurBase;
 import robot.capteur.CapteurCollision;
 import robot.capteur.CapteurVide;
 import robot.cartographie.Carte;
@@ -10,6 +11,7 @@ import sol.typeSol;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 /**
  * Created by paoli3 on 24/04/18.
@@ -21,15 +23,19 @@ public class Robot implements Runnable{
     private Reserve reserve;
     private Thread thread;
     private Direction deplacement;
+    private CapteurBase base;
     private CapteurCollision collision;
     private CapteurVide vide;
     private Carte cartographie;
     private Sol[][] piece;
     private int posX,posY, nb_deplacement=0;
     private Direction orientation;
+    private ArrayList<Direction> toutDeplacement;
 
     public Robot(Reserve reserve1, Batterie batterie1, Sol[][] piece){
+        toutDeplacement= new ArrayList<Direction>();
         this.piece=piece;
+        base = new CapteurBase(this);
         collision = new CapteurCollision(this);
         vide = new CapteurVide(this);
         cartographie=new Carte();
@@ -87,6 +93,15 @@ public class Robot implements Runnable{
             }
         });
 
+        base.addPropertyChangeSupportListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                batterie.rechargerBatterie();
+                reserve.viderReserve();
+                actif=true;
+            }
+        });
+
         thread= new Thread(this);
     }
 
@@ -97,7 +112,6 @@ public class Robot implements Runnable{
     public void deplacerRobot(Direction direction){
         Sol memoire = piece[posX][posY];
         int tempoX, tempoY;
-        System.out.println("coucou");
         collision.detecteur(direction);
         vide.detecteur(direction);
         if(!refuser) {
@@ -135,28 +149,28 @@ public class Robot implements Runnable{
                         batterie.consommation_virage();
                     }
                 }
+                toutDeplacement.add(direction);
                 orientation = direction;
                 cartographie.setInformation(posX, posY, false);
                 nb_deplacement++;
             }
         }
         else{
-            switch (direction) {
-                case BAS:
-                    posY--;
-                    break;
-                case HAUT:
-                    posY++;
-                    break;
-                case DROITE:
-                    posX++;
-                    break;
-                case GAUCHE:
-                    posX--;
-                    break;
-            }
-            cartographie.setInformation(posX, posY, true);
-            refuser = true;
+                switch (direction) {
+                    case BAS:
+                        cartographie.setInformation(posX, posY++, true);
+                        break;
+                    case HAUT:
+                        cartographie.setInformation(posX, posY--, true);
+                        break;
+                    case DROITE:
+                        cartographie.setInformation(posX++, posY, true);
+                        break;
+                    case GAUCHE:
+                        cartographie.setInformation(posX--, posY, true);
+                        break;
+                }
+                refuser = true;
         }
     }
 
@@ -167,16 +181,6 @@ public class Robot implements Runnable{
 
 
 
-
-
-    private void Topologie(int posY, int posX, String zone){
-  /*      if(zone.charAt(0)=='0' || zone.charAt(0)=='T' ){
-            cartographie.setInformation(posY,posX,false);
-        }
-        else{
-            cartographie.setInformation(posY,posX,true);
-        }*/
-    }
     public Carte getCartographie(){
         return cartographie;
     }
@@ -196,9 +200,46 @@ public class Robot implements Runnable{
         return posY;
     }
 
+    private void retournerBase(){
+        for(int i=toutDeplacement.size()-1; i>=0; i--){
+            Direction direction=null;
+            Sol memoire = piece[posX][posY];
+            switch (toutDeplacement.remove(i)){
+                case GAUCHE: posX++;
+                direction=Direction.DROITE;
+                    break;
+                case DROITE: posX--;
+                direction=Direction.GAUCHE;
+                    break;
+                case HAUT:  posY++;
+                 direction=Direction.BAS;
+                    break;
+                case BAS: posY--;
+                direction=Direction.HAUT;
+                    break;
+            }
+            if (memoire.getSol()== typeSol.TAPIS) {
+                if (orientation == direction) {
+                    batterie.consommation_obstacle();
+                } else
+                    batterie.consommation_virage_sol();
+            } else if (memoire.getSol()==typeSol.NORMAL) {
+                if (orientation == direction) {
+                    batterie.consommation_normale();
+                } else {
+                    batterie.consommation_virage();
+                }
+            }
+        }
+        System.out.println("pos x "+posX+" pos y"+posY);
+    }
+
     @Override
     public void run(){
     }
+
+
+
 
 
 }
