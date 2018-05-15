@@ -22,8 +22,6 @@ import sol.Sol;
 public class Ecran extends Application {
     Piece_in piece_in = new Piece_in();
     Donnee_Piece piece = new Donnee_Piece();
-    piece.setPiece( piece_in.getArray() );
-    piece.afficherPiece();
     Sol[][] sol = new Sol[piece.getPiece().length][piece.getPiece()[0].length];
     private Batterie batterie = new Batterie();
     private Reserve reserve = new Reserve(100);

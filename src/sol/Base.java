@@ -2,7 +2,8 @@ package sol;
 
 import inout.Donnee_Piece;
 import robot.Robot;
-import robot.capteur.*;
+import robot.capteur.CapteurBase;
+
 
 
 /*
@@ -21,5 +22,23 @@ public class Base {
     public Base(CapteurBase cap, Donnee_Piece piece) {
         capteur = cap;
         this.piece=piece;
+    }
+
+    public void rechargerRobot(Robot robot) {
+        //Il faut 5 secondes pour recharger le robot
+
+        /*if (capteur.getDetect() == true) {
+            robot.getBatterie().rechargerBatterie();
+        }*/
+
+
+
+    }
+    public void viderReservoir(Robot robot) {
+        //Il faut 2 seconde pour recharger le robot
+        /*if (capteur.getDetect() == true) {
+            robot.getReserve().viderReseve();
+        }*/
+
     }
 }
