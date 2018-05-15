@@ -4,10 +4,11 @@ import robot.Batterie;
 import robot.Direction;
 import robot.Reserve;
 import robot.Robot;
-import sol.Sol;
+import robot.exception.BatterieException;
+import sol.*;
 
 public class Main {
-   /* public static void main(String[] args){
+    public static void main(String[] args){
         Piece_in piece_in = new Piece_in();
         Donnee_Piece piece = new Donnee_Piece();
         piece.setPiece( piece_in.getArray() );
@@ -18,15 +19,22 @@ public class Main {
         {
             for(int j=0;j<sol[i].length;j++){
                 sol[i][j] = new Sol(piece.getPiece()[i][j]);
-                sol[i][j].afficherSol();
+
             }
-            System.out.println("");
+
         }
         Robot robot = new Robot(new Reserve(100),new Batterie(), sol);
+        try {
+            robot.deplacerRobot(Direction.BAS);
+            robot.deplacerRobot(Direction.DROITE);
+            robot.deplacerRobot(Direction.DROITE);
+            robot.deplacerRobot(Direction.BAS);
+            robot.deplacerRobot(Direction.DROITE);
+            robot.deplacerRobot(Direction.BAS);
+            robot.deplacerRobot(Direction.BAS);
+        }catch (BatterieException be){
+            be.printStackTrace();
+        }
+
     }
-        robot.deplacerRobot(Direction.BAS);
-        robot.deplacerRobot(Direction.DROITE);
-        robot.deplacerRobot(Direction.DROITE);
-        robot.retournerBase();
-    }*/
 }

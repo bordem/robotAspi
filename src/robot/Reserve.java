@@ -16,9 +16,15 @@ public class Reserve {
     public int getReserveMax(){return  reserveMax;}
     public int getReserveActuelle(){return reserveActuelle;}
     public void setReserveActuelle(int aspiration){
-        int oldReserve=reserveActuelle;
-        reserveActuelle += aspiration;
-        nPcs.firePropertyChange("ReserveMaJ", oldReserve, reserveActuelle);
+        System.out.println("J'aspire "+ aspiration +" poussiere");
+        if((reserveActuelle+aspiration)>reserveMax) {
+            int oldReserve = reserveActuelle;
+            reserveActuelle += aspiration;
+            nPcs.firePropertyChange("ReserveMaJ", oldReserve, reserveActuelle);
+        }
+        else{
+            reserveActuelle +=aspiration;
+        }
     }
     public void setReserveMax(int nouvelleReserveMax){reserveMax=nouvelleReserveMax;}
 

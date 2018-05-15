@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.awt.*;
+
 public class Controller {
 
     private long debut = System.currentTimeMillis();
@@ -29,6 +31,8 @@ public class Controller {
                 return null;
             }
         };
+
+
         Text textTemps = new Text(0,25,"");
         textTemps.setFont(new Font(12));
         textTemps.textProperty().bind(calculTemps.messageProperty());

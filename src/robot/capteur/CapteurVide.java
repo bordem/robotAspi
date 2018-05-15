@@ -20,9 +20,10 @@ public class CapteurVide extends Capteur {
     protected void setDetect(int x, int y, Sol[][] piece) {
         boolean temporaire;
         if(piece[x][y].getSol()== typeSol.VIDE){
-            temporaire = detect;
-            detect = temporaire;
-            nPcs.firePropertyChange("Collision", temporaire, detect);
+            System.out.println("vide "+x+" "+y);
+            temporaire = false;
+            detect = true;
+            nPcs.firePropertyChange("vide", temporaire, detect);
         }
         else{
             detect = false;

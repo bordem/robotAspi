@@ -10,7 +10,7 @@ public class Carte {
         carte=new Boolean[100][100];
     }
 
-    public void setInformation(int ligne, int colonne, boolean obstacle){
+    public void setInformation(int colonne, int ligne , boolean obstacle){
         carte[ligne][colonne]=new Boolean(obstacle);
     }
 

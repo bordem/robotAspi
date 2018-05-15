@@ -19,16 +19,17 @@ public abstract class Capteur {
     public void detecteur( Direction direction){
         switch(direction)
         {
-            case BAS:  setDetect(robot.getX(), robot.getY()+1, robot.getPiece());
+            case BAS:  setDetect( robot.getY()+1, robot.getX(), robot.getPiece());
                 break;
-            case HAUT: setDetect(robot.getX(), robot.getY()-1, robot.getPiece());
+            case HAUT: setDetect( robot.getY()-1, robot.getX(), robot.getPiece());
                 break;
-            case DROITE: setDetect(robot.getX()+1, robot.getY(), robot.getPiece());
+            case DROITE: setDetect( robot.getY(),robot.getX()+1, robot.getPiece());
                 break;
-            case GAUCHE: setDetect(robot.getX()-1, robot.getY(), robot.getPiece());
+            case GAUCHE: setDetect( robot.getY(),robot.getX()-1, robot.getPiece());
                 break;
         }
     }
+
 
     protected abstract void setDetect(int x, int y, Sol[][] piece);
     public void addPropertyChangeSupportListener(PropertyChangeListener listener)

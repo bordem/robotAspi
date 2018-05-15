@@ -20,6 +20,7 @@ import robot.Batterie;
 import robot.Direction;
 import robot.Reserve;
 import robot.Robot;
+import robot.exception.BatterieException;
 import sol.Sol;
 
 import static robot.Direction.*;
@@ -166,7 +167,14 @@ public class Ecran extends Application {
         buttonHaut.setLayoutX(100);
         buttonHaut.setLayoutY(y);
         buttonHaut.setOnAction(e->{
-            robot.deplacerRobot(Direction.HAUT);
+            try
+            {
+                robot.deplacerRobot(Direction.HAUT);
+            }
+            catch (BatterieException be)
+            {
+                be.printStackTrace();
+            }
         });
         objet.getChildren().add(buttonHaut);
 
@@ -175,7 +183,11 @@ public class Ecran extends Application {
         buttonGauche.setLayoutX(25);
         buttonGauche.setLayoutY(y);
         buttonGauche.setOnAction(e->{
-            robot.deplacerRobot(Direction.GAUCHE);
+            try {
+                robot.deplacerRobot(Direction.GAUCHE);
+            }catch(BatterieException be){
+                be.printStackTrace();
+            }
         });
         objet.getChildren().add(buttonGauche);
 
@@ -183,7 +195,12 @@ public class Ecran extends Application {
         buttonDroit.setLayoutX(165);
         buttonDroit.setLayoutY(y);
         buttonDroit.setOnAction(e->{
-            robot.deplacerRobot(Direction.DROITE);
+            try {
+                robot.deplacerRobot(Direction.DROITE);
+            }catch (BatterieException be)
+            {
+                be.printStackTrace();
+            }
         });
         objet.getChildren().add(buttonDroit);
 
@@ -192,7 +209,11 @@ public class Ecran extends Application {
         buttonBas.setLayoutX(100);
         buttonBas.setLayoutY(y);
         buttonBas.setOnAction(e->{
-            robot.deplacerRobot(Direction.BAS);
+            try {
+                robot.deplacerRobot(Direction.BAS);
+            }catch (BatterieException be){
+                be.printStackTrace();
+            }
         });
         objet.getChildren().add(buttonBas);
 
