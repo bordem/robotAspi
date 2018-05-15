@@ -22,6 +22,6 @@ public class Main {
             }
             System.out.println("");
         }
-        Robot robot = new Robot(new Reserve(100),new Batterie(100), sol);
+        Robot robot = new Robot(new Reserve(100),new Batterie(), sol);
     }
 }
