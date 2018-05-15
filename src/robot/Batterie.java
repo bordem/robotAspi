@@ -10,7 +10,7 @@ import java.beans.PropertyChangeSupport;
 public class Batterie {
 
     private PropertyChangeSupport nPcs=new PropertyChangeSupport(this);
-    private final double capaciteMax;
+    private double capaciteMax;
     private double capaciteActuelle;
 
     public Batterie(){
@@ -22,6 +22,8 @@ public class Batterie {
         return capaciteActuelle;
     }
     public double getCapaciteMax() {return capaciteMax;}
+
+    public void setCapaciteMax(double nouvelleCapaciteMax) {capaciteMax=nouvelleCapaciteMax;}
 
     public void rechargerBatterie(){
         capaciteActuelle=capaciteMax;

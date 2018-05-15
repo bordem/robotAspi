@@ -1,6 +1,8 @@
 
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Group;
@@ -64,7 +66,7 @@ public class Ecran extends Application {
             }
         };*/
         //////////////////////////////////////////////////
-        //             Compteur deplacement             //
+        //             Compteur             //
         //////////////////////////////////////////////////
         Task compteur = new Task<Void>() {
             @Override public Void call() {
@@ -72,9 +74,15 @@ public class Ecran extends Application {
                     if (isCancelled()) {
                         break;
                     }
+                    //distance parcouru
                     String mess="Le robot a parcouru une distance de : "+robot.getNb_deplacement();
                     updateMessage(mess);
-                    //System.out.println(mess);
+                    //ProgressBarre Batterie
+                    double i,max;
+                    i=robot.getBatterie().getCapaciteActuelle();
+                    max=robot.getBatterie().getCapaciteMax();
+                    updateProgress(i, max);
+
                 }
                 return null;
             }
@@ -85,14 +93,22 @@ public class Ecran extends Application {
         Task calculTemps = new Task<Void>() {
             @Override public Void call() {
                 long temps;
+                long seconde;
+                long minute;
                 while(true) {
                     if (isCancelled()) {
                         break;
                     }
-                    temps=System.currentTimeMillis();
-                    String mess="Temps écoulé depuis le premier démarrage du robot: "+((temps-debut)/1000);
+                    temps=((System.currentTimeMillis()-debut)/1000);
+                    seconde = temps % 60;
+                    minute = (temps-seconde)/60;
+                    String mess="Temps écoulé depuis le premier démarrage du robot: "+minute+" min "+seconde+"sec";
                     updateMessage(mess);
-                    //System.out.println(mess);
+                    //ProgressBarre Reserve
+                    double i2,max2;
+                    i2=robot.getReserve().getReserveActuelle();
+                    max2=robot.getReserve().getReserveMax();
+                    updateProgress(i2, max2);
                 }
                 return null;
             }
@@ -124,16 +140,18 @@ public class Ecran extends Application {
         ProgressBar barBatterie = new ProgressBar();
         barBatterie.setLayoutX(100);
         barBatterie.setLayoutY(y);
+        barBatterie.progressProperty().bind(compteur.progressProperty());
         objet.getChildren().add(barBatterie);
 
         y=y+40;
-        Text textReservoir= new Text(0,y,"Reservoir a poussiere : ");
+        Text textReservoir= new Text(0,y,"Reservoir a poussière : ");
         textReservoir.setFont(new Font(12));
         objet.getChildren().add(textReservoir);
         y=y+10;
         ProgressBar barReservoir = new ProgressBar();
         barReservoir.setLayoutX(100);
         barReservoir.setLayoutY(y);
+        barReservoir.progressProperty().bind(calculTemps.progressProperty());
         objet.getChildren().add(barReservoir);
 
         y=y+50;
@@ -206,9 +224,17 @@ public class Ecran extends Application {
             sliderBatterie.setShowTickMarks(true);
             sliderBatterie.setShowTickLabels(true);
             sliderBatterie.setValue(robot.getBatterie().getCapaciteMax());
+
+            sliderBatterie.valueProperty().addListener(new ChangeListener<Number>() {
+                public void changed(ObservableValue<? extends Number> ov,
+                                    Number old_val, Number new_val) {
+                    robot.getBatterie().setCapaciteMax(new_val.doubleValue());
+                }
+            });
+
             objetOption.getChildren().add(sliderBatterie);
 
-            //Slider batterie avec label
+            //Slider reserve avec label
             Text labelReserve= new Text(0,75,"Reserve : ");
             labelReserve.setFont(new Font(12));
             objetOption.getChildren().add(labelReserve);
@@ -218,6 +244,15 @@ public class Ecran extends Application {
             sliderReserve.setLayoutY(50);
             sliderReserve.setShowTickMarks(true);
             sliderReserve.setShowTickLabels(true);
+            sliderReserve.setValue(robot.getReserve().getReserveMax());
+
+            sliderReserve.valueProperty().addListener(new ChangeListener<Number>() {
+                public void changed(ObservableValue<? extends Number> ov,
+                                    Number old_val, Number new_val) {
+                    robot.getReserve().setReserveMax(new_val.intValue());
+                }
+            });
+
             objetOption.getChildren().add(sliderReserve);
 
 

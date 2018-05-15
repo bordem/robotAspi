@@ -20,6 +20,7 @@ public class Reserve {
         reserveActuelle += aspiration;
         nPcs.firePropertyChange("ReserveMaJ", oldReserve, reserveActuelle);
     }
+    public void setReserveMax(int nouvelleReserveMax){reserveMax=nouvelleReserveMax;}
 
     public void viderReserve(){
         reserveActuelle=0;
