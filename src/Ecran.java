@@ -6,10 +6,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -22,6 +30,7 @@ import robot.Reserve;
 import robot.Robot;
 import robot.exception.BatterieException;
 import sol.Sol;
+import sol.typeSol;
 
 import static robot.Direction.*;
 
@@ -33,6 +42,18 @@ public class Ecran extends Application {
     private Scene scene;
     Group objet = new Group();
 
+
+    private Node getSpecificNode(Parent root, String stg) {
+        for (Node node : root.getChildrenUnmodifiable()) {
+            if (stg.equals(node.getUserData())) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+
+
     @Override public void start(Stage stage) {
 
         Piece_in piece_in = new Piece_in();
@@ -40,32 +61,67 @@ public class Ecran extends Application {
         piece.setPiece( piece_in.getArray() );
         piece.afficherPiece();
         Sol[][] sol = new Sol[piece.getPiece().length][piece.getPiece()[0].length];
+        System.out.println(" ICI "+sol.length+" "+sol[0].length);
         for(int i=0; i< sol.length; i++)
         {
             for(int j=0;j<sol[i].length;j++){
                 sol[i][j] = new Sol(piece.getPiece()[i][j]);
-                sol[i][j].afficherSol();
+
             }
-            System.out.println("");
+
         }
-        Robot robot = new Robot(new Reserve(100),new Batterie(), sol);
+        Robot robot = new Robot(new Batterie(), sol);
+        Scene scene = new Scene(objet,1000,600);
 
-        //System.out.println("Debut : "+debut);
-
-        /*Task task = new Task<Void>() {
-            @Override public Void call() {
-                final int max = 100000000;
-                for (int i=1; i<=max; i++) {
-                    if(i==max){i=0;}
-                    if (isCancelled()) {
-                        break;
-                    }
-                    updateProgress(i, max);
-
+        Circle circle = new Circle(13,Color.CYAN);
+        Canvas canvas = new Canvas();
+        canvas.setLayoutX(440);
+        canvas.setHeight(scene.getHeight());
+        canvas.setWidth(scene.getWidth()-440);
+        circle.setCenterX(455+robot.getX()*30);
+        circle.setCenterY(15+robot.getY()*30);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.YELLOW);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        objet.getChildren().addAll(canvas, circle);
+        for(int i=0; i< sol.length; i++)
+        {
+            for(int j=0;j<sol[i].length;j++){
+                if(sol[i][j].getSol()== typeSol.OBSTACLE){
+                    gc.setFill(Color.RED);
                 }
-                return null;
+                else if(sol[i][j].getSol()== typeSol.NORMAL){
+                    gc.setFill(Color.WHITE);
+                    String key = String.valueOf(i)+String.valueOf(j);
+                    String tampon = String.valueOf(sol[i][j].getEpaisseurPoussiere());
+                    Label label=new Label(tampon);
+                    label.setUserData(key);
+                    label.setLayoutX(440+j*30);
+                    label.setLayoutY(i*30);
+                    objet.getChildren().add(label);
+                }
+                else if(sol[i][j].getSol()== typeSol.VIDE){
+                    gc.setFill(Color.BLUE);
+                }
+                else if(sol[i][j].getSol()== typeSol.TAPIS){
+                    gc.setFill(Color.BROWN);
+                    String key = String.valueOf(i)+String.valueOf(j);
+                    String tampon = String.valueOf(sol[i][j].getEpaisseurPoussiere());
+                    Label label=new Label(tampon);
+                    label.setLayoutX(440+j*30);
+                    label.setLayoutY(i*30);
+                    label.setUserData(key);
+                    objet.getChildren().add(label);
+                }
+                else if(sol[i][j].getSol()== typeSol.BASE){
+                    gc.setFill(Color.GREEN);
+                }
+                gc.fillRect(j*30, i*30, 30, 30);
             }
-        };*/
+        }
+
+
+
         //////////////////////////////////////////////////
         //             Compteur             //
         //////////////////////////////////////////////////
@@ -93,9 +149,7 @@ public class Ecran extends Application {
         //////////////////////////////////////////////////
         Task calculTemps = new Task<Void>() {
             @Override public Void call() {
-                long temps;
-                long seconde;
-                long minute;
+                long temps,seconde,minute;
                 while(true) {
                     if (isCancelled()) {
                         break;
@@ -170,6 +224,14 @@ public class Ecran extends Application {
             try
             {
                 robot.deplacerRobot(Direction.HAUT);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }
             catch (BatterieException be)
             {
@@ -185,6 +247,14 @@ public class Ecran extends Application {
         buttonGauche.setOnAction(e->{
             try {
                 robot.deplacerRobot(Direction.GAUCHE);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }catch(BatterieException be){
                 be.printStackTrace();
             }
@@ -197,6 +267,14 @@ public class Ecran extends Application {
         buttonDroit.setOnAction(e->{
             try {
                 robot.deplacerRobot(Direction.DROITE);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }catch (BatterieException be)
             {
                 be.printStackTrace();
@@ -211,6 +289,14 @@ public class Ecran extends Application {
         buttonBas.setOnAction(e->{
             try {
                 robot.deplacerRobot(Direction.BAS);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }catch (BatterieException be){
                 be.printStackTrace();
             }
@@ -290,7 +376,7 @@ public class Ecran extends Application {
         new Thread(calculTemps).start();
         new Thread(compteur).start();
 
-        Scene scene = new Scene(objet,1000,600);
+
 
         stage.setTitle("Robot Aspi");
         stage.setScene(scene);

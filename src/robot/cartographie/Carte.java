@@ -5,16 +5,19 @@ import java.util.Arrays;
 
 
 public class Carte {
-    private Boolean[][] carte;
+    private int[][] carte;
     public Carte(){
-        carte=new Boolean[100][100];
+        carte=new int[6][6];
+        for(int[] tableau : carte){
+            Arrays.fill(tableau, 9);
+        }
     }
 
-    public void setInformation(int colonne, int ligne , boolean obstacle){
-        carte[ligne][colonne]=new Boolean(obstacle);
+    public void setInformation(int colonne, int ligne , int obstacle){
+        carte[ligne][colonne]=obstacle;
     }
 
-    public Boolean[][] getCarte() {
+    public int[][] getCarte() {
         return carte;
     }
 }
