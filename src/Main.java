@@ -21,7 +21,6 @@ public class Main {
                 sol[i][j] = new Sol(piece.getPiece()[i][j]);
 
             }
-
         }
         Robot robot = new Robot(new Batterie(), sol);
         robot.test();

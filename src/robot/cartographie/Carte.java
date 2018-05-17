@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class Carte {
     private int[][] carte;
     public Carte(){
-        carte=new int[6][6];
+        carte=new int[20][20];
         for(int[] tableau : carte){
             Arrays.fill(tableau, 9);
         }

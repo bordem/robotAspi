@@ -52,6 +52,10 @@ public class Controller {
     @FXML
     private Button Demarrer;
     @FXML
+    private Button IA;
+
+
+    @FXML
     private Text textTemps;
     @FXML
     private Text textDeplacement;
@@ -59,8 +63,8 @@ public class Controller {
     private Text textBatterie;
     @FXML
     private Text textReservoir;
-    @FXML
-    private Text textNBBase;
+
+    private Label textNBBase;
     @FXML
     private Text textQuantitePoussiere;
 
@@ -70,7 +74,7 @@ public class Controller {
 
     @FXML
     private Circle circle;
-
+    private int nb_base;
     private Piece_in piece_in;
     private Donnee_Piece piece;
     private Sol[][] sol;
@@ -95,6 +99,7 @@ public class Controller {
      */
     @FXML
     public void initialiser(ActionEvent event){
+        nb_base=0;
         gc = canvas.getGraphicsContext2D();
         piece_in = new Piece_in();
         Donnee_Piece piece = piece = new Donnee_Piece();
@@ -167,12 +172,15 @@ public class Controller {
         barBatterie.setLayoutY(100);
         barBatterie.progressProperty().bind(compteur.progressProperty());
         root.getChildren().add(barBatterie);
-
+        textNBBase=new Label("Nombre dois que le robot est allé à la base : " + this.nb_base);
+        textNBBase.setUserData("A");
+        textNBBase.setLayoutX(0);
+        textNBBase.setLayoutY(75);
         barReservoir = new ProgressBar();
         barReservoir.setLayoutX(100);
         barReservoir.setLayoutY(143);
         barReservoir.progressProperty().bind(calculTemps.progressProperty());
-        root.getChildren().add(barReservoir);
+        root.getChildren().addAll(barReservoir, textNBBase);
 
         new Thread(calculTemps).start();
         new Thread(compteur).start();
@@ -253,6 +261,11 @@ public class Controller {
                 Label lab = (Label)getSpecificNode(root,key);
                 lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
             }
+            else if(ceSol == typeSol.BASE){
+                robot.getBatterie().rechargerBatterie();
+                robot.getReserve().viderReserve();
+                Incrementer(root);
+            }
         }
         catch (BatterieException be)
         {
@@ -272,6 +285,11 @@ public class Controller {
                 String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
                 Label lab = (Label)getSpecificNode(root,key);
                 lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+            }
+            else if(ceSol == typeSol.BASE){
+                robot.getBatterie().rechargerBatterie();
+                robot.getReserve().viderReserve();
+                Incrementer(root);
             }
         }
         catch (BatterieException be)
@@ -293,6 +311,11 @@ public class Controller {
                 Label lab = (Label)getSpecificNode(root,key);
                 lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
             }
+            else if(ceSol == typeSol.BASE){
+                robot.getBatterie().rechargerBatterie();
+                robot.getReserve().viderReserve();
+                Incrementer(root);
+            }
         }
         catch (BatterieException be)
         {
@@ -312,6 +335,11 @@ public class Controller {
                 String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
                 Label lab = (Label)getSpecificNode(root,key);
                 lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+            }
+            else if(ceSol == typeSol.BASE){
+                robot.getBatterie().rechargerBatterie();
+                robot.getReserve().viderReserve();
+                Incrementer(root);
             }
         }
         catch (BatterieException be)
@@ -382,5 +410,22 @@ public class Controller {
         stageOption.sizeToScene();
         stageOption.show();
 
+    }
+
+    @FXML
+    public void lancerIA(){
+        robot.getThread().run();
+    }
+
+
+    /**
+     * Incrémente le compteur d'aller-retour à la base
+     * @param root
+     */
+    private void Incrementer(Parent root) {
+        nb_base++;
+        Label label = (Label) getSpecificNode(root, "A");
+        if (label != null)
+            label.setText("Nombre dois que le robot est allé à la base : " + this.nb_base);
     }
 }
