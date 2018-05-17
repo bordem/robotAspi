@@ -291,6 +291,8 @@ public class Ecran extends Application {
 
         });
 
+        //Image schema
+
         //new Thread(task).start();
         new Thread(calculTemps).start();
         new Thread(compteur).start();
