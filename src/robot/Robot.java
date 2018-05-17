@@ -33,7 +33,10 @@ public class Robot implements Runnable{
     private Direction orientation;
     private ArrayList<Direction> toutDeplacement;
 
-
+    public Robot(){
+        batterie = new Batterie();
+        reserve =new Reserve(100);
+    }
 
     public Robot( Batterie batterie1, Sol[][] piece){
         toutDeplacement= new ArrayList<Direction>();

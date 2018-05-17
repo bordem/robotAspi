@@ -34,11 +34,13 @@ import sol.typeSol;
 
 import static robot.Direction.*;
 
-public class Ecran extends Application {
+
+//AFFICHAGE GRAPHIQUE SANS FXML
+public class Ecran /*extends Application*/ {
 
 
 
-    private long debut = System.currentTimeMillis();
+   /* private long debut = System.currentTimeMillis();
     private Scene scene;
     Group objet = new Group();
 
@@ -387,5 +389,5 @@ public class Ecran extends Application {
 
     public static void main(String[] args) {
         Application.launch(args);
-    }
+    }*/
 }
