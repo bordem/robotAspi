@@ -6,6 +6,7 @@ import robot.capteur.CapteurCollision;
 import robot.capteur.CapteurVide;
 import robot.cartographie.Carte;
 import robot.exception.BatterieException;
+import robot.exception.ParcoursException;
 import robot.exception.ReserveException;
 import sol.Sol;
 import sol.typeSol;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
  */
 
 public class Robot implements Runnable{
-    private boolean actif,rempli,refuser,nb_base ;
+    private boolean actif,rempli,refuser;
     private Batterie batterie;
     private Reserve reserve;
     private Thread thread;
@@ -29,7 +30,7 @@ public class Robot implements Runnable{
     private CapteurVide vide;
     private Carte cartographie;
     private Sol[][] piece;
-    private int posX,posY, nb_deplacement=0;
+    private int posX,posY, nb_deplacement=0, memo=0;
     private Direction orientation;
     private ArrayList<Direction> toutDeplacement;
 
@@ -39,6 +40,7 @@ public class Robot implements Runnable{
     }
 
     public Robot( Batterie batterie1, Sol[][] piece){
+
         toutDeplacement= new ArrayList<Direction>();
         this.piece=new Sol[piece.length][piece[0].length];
         base = new CapteurBase(this);
@@ -109,6 +111,9 @@ public class Robot implements Runnable{
 
     public Reserve getReserve(){return reserve;}
     public Batterie getBatterie(){return batterie;}
+    public void setActif(Boolean actif){
+        this.actif = actif;
+    }
 
 
     /**
@@ -192,8 +197,9 @@ public class Robot implements Runnable{
         reserve.setReserveActuelle(aspiration);
     }
 
-
-
+    public Direction getOrientation() {
+        return orientation;
+    }
 
     public Carte getCartographie(){
         return cartographie;
@@ -257,7 +263,7 @@ public class Robot implements Runnable{
                 be.printStackTrace();
             }
         }
-        System.out.println("pos x "+posX+" pos y"+posY);
+        actif = false;
         System.exit(0);
     }
 
@@ -366,18 +372,21 @@ public class Robot implements Runnable{
     /**
      * permet de choisir la direction du robot. Il ira soit à gauche, soit tout droit.
      * Met également à jour les informations des capteurs vide et collision sur ça droite
+     * memo va de 0 à 4, si la case est déjà parcouru, alors memo est incrémenté.
+     * si memo atteint 4 on remet à 0. Cela signifi donc que le robot à vérifier autour de lui
      * @param direction
      * @return
      */
-    private Direction choixAutomate(Direction direction){
-        boolean tampon=false;
+    private Direction choixAutomate(Direction direction) {
+        boolean tampon =false;
         if(!simulerMouvement(direction)) {
             tampon = true;
-            System.out.println("oui\n \n \n");
         }
+
+
         collision.detecteur(direction);
         vide.detecteur(direction);
-        if(refuser ){
+        if(refuser && !tampon){
             switch (direction){  //Cartographie à " l'impact " avec le mur d'en face
                 case HAUT:
                         mettreAjourDroite(Direction.HAUT);
@@ -413,13 +422,21 @@ public class Robot implements Runnable{
             }
             else{
                 switch (direction){
-                    case GAUCHE: return Direction.BAS;
+                    case GAUCHE:
+                            orientation = Direction.BAS;
+                        return Direction.BAS;
 
-                    case DROITE: return Direction.HAUT;
+                    case DROITE:
+                        orientation = Direction.HAUT;
+                        return Direction.HAUT;
 
-                    case BAS: return Direction.GAUCHE;
+                    case BAS:
+                        orientation = Direction.GAUCHE;
+                        return Direction.GAUCHE;
 
-                    case HAUT: return Direction.DROITE;
+                    case HAUT:
+                        orientation = Direction.DROITE;
+                        return Direction.DROITE;
 
                 }
                 return direction;
@@ -444,7 +461,8 @@ public class Robot implements Runnable{
                 else{
                     verificateActif();
                     verificateSac();
-                    Direction direction=choixAutomate(orientation);
+                    Direction direction;
+                    direction = choixAutomate(orientation);
                     collision.detecteur(direction);
                     vide.detecteur(direction  );
 
@@ -460,6 +478,8 @@ public class Robot implements Runnable{
             }
             catch (BatterieException be) {
                 be.printStackTrace();
+                actif=false;
+                break;
             }
             catch (ReserveException re){
                 re.printStackTrace();
@@ -480,6 +500,12 @@ public class Robot implements Runnable{
     @Override
     public void run(){
         while(true){
+            if(actif)
+            try {
+                Thread.sleep(100);
+            }catch(InterruptedException ie){
+                ie.printStackTrace();
+            }
             try{
                 if(nb_deplacement==0) {
                     verificateActif();
@@ -488,41 +514,35 @@ public class Robot implements Runnable{
                 else{
                     verificateActif();
                     verificateSac();
-                    collision.detecteur(orientation);
-                    vide.detecteur(orientation);
-                    if(refuser==false && simulerMouvement(orientation)){
-                        automateDeplacement(orientation);
-                    }
-                    else{
-                        automateDeplacement(choixAutomate(orientation));
-                    }
+                    Direction direction;
+                    direction = choixAutomate(orientation);
+                    collision.detecteur(direction);
+                    vide.detecteur(direction  );
 
+                    if(refuser==false ) {
+                        automateDeplacement(direction);
+                    }
                 }
                 System.out.println("pos y "+posY+" pos x "+posX);
-                try {
-                    Thread.sleep(100);
-                }catch(InterruptedException ie){
-                    ie.printStackTrace();
-                }
-
             }
             catch (BatterieException be) {
                 be.printStackTrace();
+                break;
             }
             catch (ReserveException re){
                 re.printStackTrace();
                 retournerBase();
             }
+
         }
 
     }
 
-    /**
-     * Prend en paramètre une direction et permet de savoir si le robot à déjà parcouru
-     * @param direction
-     * @return
-     */
 
+    /**
+     * Verfi si le capteur à droite du robot détecte un obstacle ou le vide
+     * @param direction
+     */
     private void mettreAjourDroite(Direction direction){
         switch (direction) {
             case HAUT:
@@ -561,6 +581,11 @@ public class Robot implements Runnable{
     }
 
 
+    /**
+     * Verifier si le mouvement suivant est sur une case déjà parcouru par le robot
+     * @param direction
+     * @return
+     */
     private boolean simulerMouvement(Direction direction){
         switch(direction)
         {
@@ -575,12 +600,12 @@ public class Robot implements Runnable{
             }
                 break;
             case DROITE:
-                if(cartographie.getCarte()[posY+1][posX]==0 || cartographie.getCarte()[posY+1][posX]==2) {
+                if(cartographie.getCarte()[posY][posX+1]==0 || cartographie.getCarte()[posY][posX+1]==2) {
                 return false;
             }
                 break;
             case GAUCHE:
-                if(cartographie.getCarte()[posY-1][posX]==0 || cartographie.getCarte()[posY-1][posX]==2) {
+                if(cartographie.getCarte()[posY][posX-1]==0 || cartographie.getCarte()[posY][posX-1]==2) {
                 return false;
             }
                 break;

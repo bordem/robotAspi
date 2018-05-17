@@ -83,4 +83,8 @@ public class Batterie {
         nPcs.removePropertyChangeListener(listener);
     }
 
+    public void viderBatterie(double capacite){
+        capaciteActuelle = capacite;
+    }
+
 }

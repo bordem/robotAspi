@@ -26,6 +26,15 @@ public class Reserve {
             reserveActuelle +=aspiration;
         }
     }
+
+    public int getReserveActuelle(int aspire)
+    {
+        if(reserveActuelle+aspire>reserveMax){
+            return reserveActuelle =reserveMax;
+        }
+        return reserveActuelle +=aspire;
+    }
+
     public void setReserveMax(int nouvelleReserveMax){reserveMax=nouvelleReserveMax;}
 
     public void viderReserve(){

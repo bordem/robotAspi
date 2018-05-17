@@ -26,12 +26,11 @@
                 layoutX="25" layoutY="285"/>
                 <Button id="buttonStart" fx:id="Demarrer" mnemonicParsing="false" onAction="#initialiser"
                     layoutX="300" layoutY="600"    text="Demarrer"/>
+                <Button fx:id="IA" id="ia" mnemonicParsing="false" onAction="#lancerIA" layoutY="625" layoutX="300" text="Demarrer IA"/>
                 <Canvas fx:id="canvas" layoutX="440" height="800" width="540" />
                 <Circle fx:id="circle" radius="13" fill="white"/>
-
                 <Text fx:id="textTemps" layoutX="0" layoutY="25" text=" "><font><Font size="12"/></font></Text>
                 <Text fx:id="textDeplacement" layoutX="0" layoutY="50" text=" " ></Text>
-                <Text fx:id="textNBBase" layoutX="0" layoutY="75" text="Le robot est revenu a la base n fois :" ><font><Font size="12"/></font></Text>
                 <Text fx:id="textBatterie" layoutX="0" layoutY="100" text="Batterie :"><font><Font size="12"/></font></Text>
                 <Text fx:id="textReservoir" layoutX="0" layoutY="140" text="Reservoir a poussière :" ><font><Font size="12"/></font></Text>
                 <Text fx:id="textQuantitePoussiere" layoutX="0" layoutY="200" text="Le robot a aspiré : " ><font><Font size="12"/></font></Text>
