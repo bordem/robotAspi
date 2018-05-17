@@ -8,8 +8,10 @@ import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -22,6 +24,7 @@ import robot.Reserve;
 import robot.Robot;
 import robot.exception.BatterieException;
 import sol.Sol;
+import sun.font.TextLabel;
 
 import static robot.Direction.*;
 
@@ -231,17 +234,11 @@ public class Ecran extends Application {
             Stage stageOption = new Stage();
             stageOption.show();
 
-            //Groupe d'objet de la fenetre option
-            Group objetOption = new Group();
-
-            //Slider batterie avec label
-            Text labelBatterie= new Text(0,25,"Batterie : ");
-            labelBatterie.setFont(new Font(12));
-            objetOption.getChildren().add(labelBatterie);
-
-            Slider sliderBatterie = new Slider(0, 100, 1);
-            sliderBatterie.setLayoutX(75);
-            sliderBatterie.setLayoutY(0);
+            //BATTERIE
+            final Label labelBatterie = new Label("Batterie : ");
+            GridPane.setConstraints(labelBatterie, 0, 0);
+            final Slider sliderBatterie = new Slider();
+            GridPane.setConstraints(sliderBatterie, 1, 0);
             sliderBatterie.setShowTickMarks(true);
             sliderBatterie.setShowTickLabels(true);
             sliderBatterie.setValue(robot.getBatterie().getCapaciteMax());
@@ -253,16 +250,11 @@ public class Ecran extends Application {
                 }
             });
 
-            objetOption.getChildren().add(sliderBatterie);
-
-            //Slider reserve avec label
-            Text labelReserve= new Text(0,75,"Reserve : ");
-            labelReserve.setFont(new Font(12));
-            objetOption.getChildren().add(labelReserve);
-
+            //RESERVE
+            final Label labelReserve= new Label("Reserve : ");
+            GridPane.setConstraints(labelReserve, 0, 1);
             Slider sliderReserve = new Slider(0, 100, 1);
-            sliderReserve.setLayoutX(75);
-            sliderReserve.setLayoutY(50);
+            GridPane.setConstraints(sliderReserve, 1, 1);
             sliderReserve.setShowTickMarks(true);
             sliderReserve.setShowTickLabels(true);
             sliderReserve.setValue(robot.getReserve().getReserveMax());
@@ -274,17 +266,30 @@ public class Ecran extends Application {
                 }
             });
 
-            objetOption.getChildren().add(sliderReserve);
+            //GRILLE
+            final GridPane root = new GridPane();
+            root.setMaxWidth(200);
+
+            root.getColumnConstraints().setAll(
+                    new ColumnConstraints(100),
+                    new ColumnConstraints(200));
+                    root.getColumnConstraints().get(0).setHgrow(Priority.ALWAYS);
+            root.getColumnConstraints().get(1).setHgrow(Priority.ALWAYS);
+
+            root.getRowConstraints().setAll(
+                    new RowConstraints(25, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE),
+                    new RowConstraints(25, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE));
+            root.getRowConstraints().get(0).setVgrow(Priority.NEVER);
+            root.getRowConstraints().get(1).setVgrow(Priority.ALWAYS);
+            root.getChildren().setAll(labelBatterie, sliderBatterie, labelReserve,sliderReserve);
 
 
-            Scene sceneOption = new Scene(objetOption,300,100);
+            final Scene scene = new Scene(root, 400, 100);
             stageOption.setTitle("Options robot Aspi");
-            stageOption.setScene(sceneOption);
-            stageOption.sizeToScene();
+            stageOption.setScene(scene);
             stageOption.show();
 
         });
-
 
         //new Thread(task).start();
         new Thread(calculTemps).start();
