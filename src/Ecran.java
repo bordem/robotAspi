@@ -5,13 +5,24 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -24,10 +35,16 @@ import robot.Reserve;
 import robot.Robot;
 import robot.exception.BatterieException;
 import sol.Sol;
-import sun.font.TextLabel;
 
+import sun.font.TextLabel;
+import sol.typeSol;
+
+
+import static javafx.scene.input.TouchPoint.State.PRESSED;
 import static robot.Direction.*;
 
+
+//AFFICHAGE GRAPHIQUE SANS FXML
 public class Ecran extends Application {
 
 
@@ -36,6 +53,18 @@ public class Ecran extends Application {
     private Scene scene;
     Group objet = new Group();
 
+
+    private Node getSpecificNode(Parent root, String stg) {
+        for (Node node : root.getChildrenUnmodifiable()) {
+            if (stg.equals(node.getUserData())) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+
+
     @Override public void start(Stage stage) {
 
         Piece_in piece_in = new Piece_in();
@@ -43,32 +72,67 @@ public class Ecran extends Application {
         piece.setPiece( piece_in.getArray() );
         piece.afficherPiece();
         Sol[][] sol = new Sol[piece.getPiece().length][piece.getPiece()[0].length];
+        System.out.println(" ICI "+sol.length+" "+sol[0].length);
         for(int i=0; i< sol.length; i++)
         {
             for(int j=0;j<sol[i].length;j++){
                 sol[i][j] = new Sol(piece.getPiece()[i][j]);
-                sol[i][j].afficherSol();
+
             }
-            System.out.println("");
+
         }
-        Robot robot = new Robot(new Reserve(100),new Batterie(), sol);
+        Robot robot = new Robot(new Batterie(), sol);
+        Scene scene = new Scene(objet,1000,600);
 
-        //System.out.println("Debut : "+debut);
-
-        /*Task task = new Task<Void>() {
-            @Override public Void call() {
-                final int max = 100000000;
-                for (int i=1; i<=max; i++) {
-                    if(i==max){i=0;}
-                    if (isCancelled()) {
-                        break;
-                    }
-                    updateProgress(i, max);
-
+        Circle circle = new Circle(13,Color.CYAN);
+        Canvas canvas = new Canvas();
+        canvas.setLayoutX(440);
+        canvas.setHeight(scene.getHeight());
+        canvas.setWidth(scene.getWidth()-440);
+        circle.setCenterX(455+robot.getX()*30);
+        circle.setCenterY(15+robot.getY()*30);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITESMOKE);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        objet.getChildren().addAll(canvas, circle);
+        for(int i=0; i< sol.length; i++)
+        {
+            for(int j=0;j<sol[i].length;j++){
+                if(sol[i][j].getSol()== typeSol.OBSTACLE){
+                    gc.setFill(Color.BLACK);
                 }
-                return null;
+                else if(sol[i][j].getSol()== typeSol.NORMAL){
+                    gc.setFill(Color.ORANGE);
+                    String key = String.valueOf(i)+String.valueOf(j);
+                    String tampon = String.valueOf(sol[i][j].getEpaisseurPoussiere());
+                    Label label=new Label(tampon);
+                    label.setUserData(key);
+                    label.setLayoutX(440+j*30);
+                    label.setLayoutY(i*30);
+                    objet.getChildren().add(label);
+                }
+                else if(sol[i][j].getSol()== typeSol.VIDE){
+                    gc.setFill(Color.LIGHTGREY);
+                }
+                else if(sol[i][j].getSol()== typeSol.TAPIS){
+                    gc.setFill(Color.LIGHTBLUE);
+                    String key = String.valueOf(i)+String.valueOf(j);
+                    String tampon = String.valueOf(sol[i][j].getEpaisseurPoussiere());
+                    Label label=new Label(tampon);
+                    label.setLayoutX(440+j*30);
+                    label.setLayoutY(i*30);
+                    label.setUserData(key);
+                    objet.getChildren().add(label);
+                }
+                else if(sol[i][j].getSol()== typeSol.BASE){
+                    gc.setFill(Color.ROYALBLUE);
+                }
+                gc.fillRect(j*30, i*30, 30, 30);
             }
-        };*/
+        }
+
+
+
         //////////////////////////////////////////////////
         //             Compteur             //
         //////////////////////////////////////////////////
@@ -91,14 +155,30 @@ public class Ecran extends Application {
                 return null;
             }
         };
+
+        //////////////////////////////////////////////////
+        //             Quantité poussière             //
+        //////////////////////////////////////////////////
+        Task poussiereAspire = new Task<Void>() {
+            @Override public Void call() {
+                while(true) {
+                    if (isCancelled()) {
+                        break;
+                    }
+                    //aspiration poussière
+                    String mess="Le robot a aspiré  : "+robot.getReserve().getReserveActuelle() +" quantité de poussière";
+                    updateMessage(mess);
+                }
+                return null;
+            }
+        };
+
         //////////////////////////////////////////////////
         //             Thread Compteur de temps         //
         //////////////////////////////////////////////////
         Task calculTemps = new Task<Void>() {
             @Override public Void call() {
-                long temps;
-                long seconde;
-                long minute;
+                long temps,seconde,minute;
                 while(true) {
                     if (isCancelled()) {
                         break;
@@ -119,6 +199,19 @@ public class Ecran extends Application {
         };
 
         int y =25;
+
+        final Button buttonStart = new Button("START");
+        buttonStart.setMinHeight(50);
+        buttonStart.setMinWidth(100);
+        buttonStart.setLayoutY(y);
+        buttonStart.setLayoutX(100);
+        objet.getChildren().add(buttonStart);
+        buttonStart.setOnAction(e->{
+            //Il faut lier le robot au bouton
+            //robot.start();
+        });
+
+        y =y+75;
         //Compte le temps
         Text textTemps = new Text(0,y,"");
         textTemps.setFont(new Font(12));
@@ -133,101 +226,197 @@ public class Ecran extends Application {
         objet.getChildren().add(textDeplacement);
 
         y=y+25;
-        Text textNBBase= new Text(0,y,"Le robot est revenu a la base n fois : ");
+        Text textNBBase= new Text(0,y,"Le robot est revenu a la base "+robot.getNb_deplacement()+" fois : ");
         textNBBase.setFont(new Font(12));
         objet.getChildren().add(textNBBase);
 
-        y=y+25;
+        //GRILLE PROGRESS BARRE
         Text textBatterie= new Text(0,y,"Batterie : ");
         textBatterie.setFont(new Font(12));
-        objet.getChildren().add(textBatterie);
+        GridPane.setConstraints(textBatterie, 0, 0);
+
         ProgressBar barBatterie = new ProgressBar();
         barBatterie.setLayoutX(100);
         barBatterie.setLayoutY(y);
         barBatterie.progressProperty().bind(compteur.progressProperty());
-        objet.getChildren().add(barBatterie);
+        GridPane.setConstraints(barBatterie, 1, 0);
 
-        y=y+40;
         Text textReservoir= new Text(0,y,"Reservoir a poussière : ");
         textReservoir.setFont(new Font(12));
-        objet.getChildren().add(textReservoir);
-        y=y+10;
+        GridPane.setConstraints(textReservoir, 0, 1);
+
         ProgressBar barReservoir = new ProgressBar();
         barReservoir.setLayoutX(100);
         barReservoir.setLayoutY(y);
         barReservoir.progressProperty().bind(calculTemps.progressProperty());
-        objet.getChildren().add(barReservoir);
+        GridPane.setConstraints(barReservoir, 1, 1);
 
-        y=y+50;
-        Text textQuantitePoussiere= new Text(0,y,"Le robot a aspiré : ");
+        y = y+25;
+        final GridPane grilleProgressBarre = new GridPane();
+
+        grilleProgressBarre.setMaxWidth(300);
+        grilleProgressBarre.setMaxHeight(50);
+        grilleProgressBarre.setLayoutY(y);
+        grilleProgressBarre.getColumnConstraints().setAll(
+                new ColumnConstraints(200),
+                new ColumnConstraints(100));
+        grilleProgressBarre.getColumnConstraints().get(0).setHgrow(Priority.ALWAYS);
+        grilleProgressBarre.getColumnConstraints().get(1).setHgrow(Priority.ALWAYS);
+        grilleProgressBarre.getRowConstraints().setAll(
+                new RowConstraints(25, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE),
+                new RowConstraints(25, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE));
+        grilleProgressBarre.getRowConstraints().get(0).setVgrow(Priority.NEVER);
+        grilleProgressBarre.getRowConstraints().get(1).setVgrow(Priority.ALWAYS);
+
+        grilleProgressBarre.getChildren().addAll(textBatterie,barBatterie,textReservoir,barReservoir);
+        objet.getChildren().add(grilleProgressBarre);
+
+        //TEXTE
+        y=y+100;
+        Text textQuantitePoussiere= new Text(0,y,"");
+        textQuantitePoussiere.textProperty().bind(poussiereAspire.messageProperty());
         textQuantitePoussiere.setFont(new Font(12));
         objet.getChildren().add(textQuantitePoussiere);
+
+
         //////////////////////////////////////////////////////
         //                 CONTROLE DU ROBOT                //
         //////////////////////////////////////////////////////
         y=y+25;
+        final int hauteurControle=250;
+        final int longeurControle=300;
+        final int nbHauteur = 5;
+        final int nbLargeur = 3;
+
         final Button buttonHaut = new Button("HAUT");
-        buttonHaut.setLayoutX(100);
-        buttonHaut.setLayoutY(y);
+        GridPane.setConstraints(buttonHaut, 1, 0);
+        buttonHaut.setMaxWidth(longeurControle/nbLargeur);
+        buttonHaut.setMaxHeight(hauteurControle/nbHauteur);
         buttonHaut.setOnAction(e->{
             try
             {
                 robot.deplacerRobot(Direction.HAUT);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }
             catch (BatterieException be)
             {
                 be.printStackTrace();
             }
         });
-        objet.getChildren().add(buttonHaut);
+        //objet.getChildren().add(buttonHaut);
 
-        y=y+40;
+
         final Button buttonGauche = new Button("GAUCHE");
-        buttonGauche.setLayoutX(25);
-        buttonGauche.setLayoutY(y);
+        GridPane.setConstraints(buttonGauche, 0, 1);
+        buttonGauche.setMaxWidth(longeurControle/nbLargeur);
+        buttonGauche.setMaxHeight(hauteurControle/nbHauteur);
         buttonGauche.setOnAction(e->{
             try {
                 robot.deplacerRobot(Direction.GAUCHE);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }catch(BatterieException be){
                 be.printStackTrace();
             }
         });
-        objet.getChildren().add(buttonGauche);
+        //objet.getChildren().add(buttonGauche);
 
         final Button buttonDroit = new Button("DROIT");
-        buttonDroit.setLayoutX(165);
-        buttonDroit.setLayoutY(y);
+        GridPane.setConstraints(buttonDroit, 2, 1);
+        buttonDroit.setMaxWidth(longeurControle/nbLargeur);
+        buttonDroit.setMaxHeight(hauteurControle/nbHauteur);
         buttonDroit.setOnAction(e->{
             try {
                 robot.deplacerRobot(Direction.DROITE);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }catch (BatterieException be)
             {
                 be.printStackTrace();
             }
         });
-        objet.getChildren().add(buttonDroit);
+        //objet.getChildren().add(buttonDroit);
 
-        y=y+40;
+
         final Button buttonBas = new Button("BAS");
-        buttonBas.setLayoutX(100);
-        buttonBas.setLayoutY(y);
+        GridPane.setConstraints(buttonBas, 1, 2);
+        buttonBas.setMaxWidth(longeurControle/nbLargeur);
+        buttonBas.setMaxHeight(hauteurControle/nbHauteur);
         buttonBas.setOnAction(e->{
             try {
                 robot.deplacerRobot(Direction.BAS);
+                circle.setCenterX(455+robot.getX()*30);
+                circle.setCenterY(15+robot.getY()*30);
+                typeSol ceSol = sol[robot.getY()][robot.getX()].getSol();
+                if( ceSol!=typeSol.BASE && ceSol!=typeSol.OBSTACLE && ceSol != typeSol.VIDE){
+                    String key = String.valueOf(robot.getY())+String.valueOf(robot.getX());
+                    Label lab = (Label)getSpecificNode(objet,key);
+                    lab.setText(String.valueOf(sol[robot.getY()][robot.getX()].getEpaisseurPoussiere()));
+                }
             }catch (BatterieException be){
                 be.printStackTrace();
             }
         });
-        objet.getChildren().add(buttonBas);
+        //objet.getChildren().add(buttonBas);
+
+        //GRILLE CONTROLE
+        final GridPane grilleControle = new GridPane();
+
+        grilleControle.setMaxWidth(longeurControle);
+        grilleControle.setMaxHeight(hauteurControle);
+        grilleControle.setLayoutY(y);
+
+        grilleControle.getColumnConstraints().setAll(
+                new ColumnConstraints(longeurControle/nbLargeur),
+                new ColumnConstraints(longeurControle/nbLargeur),
+                new ColumnConstraints(longeurControle/nbLargeur));
+        grilleControle.getColumnConstraints().get(0).setHgrow(Priority.ALWAYS);
+        grilleControle.getColumnConstraints().get(1).setHgrow(Priority.ALWAYS);
+        grilleControle.getColumnConstraints().get(2).setHgrow(Priority.ALWAYS);
+
+        grilleControle.getRowConstraints().setAll(
+                new RowConstraints(hauteurControle/nbHauteur, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE),
+                new RowConstraints(hauteurControle/nbHauteur, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE),
+                new RowConstraints(hauteurControle/nbHauteur, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE),
+                new RowConstraints(hauteurControle/nbHauteur, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE),
+                new RowConstraints(hauteurControle/nbHauteur, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE));
+        grilleControle.getRowConstraints().get(0).setVgrow(Priority.NEVER);
+        grilleControle.getRowConstraints().get(1).setVgrow(Priority.NEVER);
+        grilleControle.getRowConstraints().get(2).setVgrow(Priority.NEVER);
+        grilleControle.getRowConstraints().get(3).setVgrow(Priority.NEVER);
+        grilleControle.getRowConstraints().get(4).setVgrow(Priority.ALWAYS);
+
+
+        objet.getChildren().add(grilleControle);
 
         //////////////////////////////////////////
         //            Bouton option             //
         //////////////////////////////////////////
-        y=y+50;
         final Button boutonOption = new Button("Option");
-        boutonOption.setLayoutX(25);
-        boutonOption.setLayoutY(y);
-        objet.getChildren().add(boutonOption);
+        GridPane.setConstraints(boutonOption, 1, 4);
+        boutonOption.setMaxWidth(longeurControle/nbLargeur);
+        boutonOption.setMaxHeight(hauteurControle/nbHauteur);
+
+        //objet.getChildren().add(boutonOption);
 
         //Si le bouton option est appuyé il ouvre une fenetre
         boutonOption.setOnAction((ActionEvent event) ->{
@@ -284,21 +473,29 @@ public class Ecran extends Application {
             root.getChildren().setAll(labelBatterie, sliderBatterie, labelReserve,sliderReserve);
 
 
-            final Scene scene = new Scene(root, 400, 100);
+            final Scene scene2 = new Scene(root, 400, 100);
             stageOption.setTitle("Options robot Aspi");
-            stageOption.setScene(scene);
+            stageOption.setX(stage.getX()+(stage.getWidth()/2)-(stageOption.getWidth()/2));
+            stageOption.setY(stage.getY()+(stage.getHeight()/2)-(stageOption.getWidth()/2));
+            stageOption.setScene(scene2);
             stageOption.show();
 
         });
+
+        grilleControle.getChildren().setAll(buttonBas, buttonHaut, buttonGauche,buttonDroit,boutonOption);
+
+
 
         //Image schema
 
         //new Thread(task).start();
         new Thread(calculTemps).start();
         new Thread(compteur).start();
+        new Thread(poussiereAspire).start();
 
-        Scene scene = new Scene(objet,1000,600);
-
+        //Icone pour l'application
+        //String IconPath = "file:icone.png";
+        //stage.getIcons().add(new Image(IconPath));
         stage.setTitle("Robot Aspi");
         stage.setScene(scene);
         stage.sizeToScene();

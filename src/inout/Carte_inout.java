@@ -47,10 +47,10 @@ public class Carte_inout {
         for(int i=0; i<listeString.size(); i++){
             for(int j=0; j<listeString.get(i).size();j++){
                 if(listeString.get(i).get(j).charAt(0)=='1' ){
-                    carte.setInformation(i,j,true);
+                    carte.setInformation(i,j,1);
                 }
                 else if(listeString.get(i).get(j).charAt(0)=='0' ){
-                    carte.setInformation(i,j,false);
+                    carte.setInformation(i,j,0);
                 }
                 //Sinon erreur
             }

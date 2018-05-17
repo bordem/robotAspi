@@ -20,8 +20,7 @@ public class CapteurCollision extends Capteur {
     protected void setDetect(int x, int y, Sol[][] piece ){
         boolean temporaire;
         if(piece[x][y].getSol()== typeSol.OBSTACLE) {
-            System.out.println("ligne "+x+"   colonne"+y);
-            temporaire = false;
+            temporaire = detect;
             detect =true;
             nPcs.firePropertyChange("Collision", temporaire, detect);
         }

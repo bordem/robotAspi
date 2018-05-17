@@ -16,7 +16,7 @@ public class Reserve {
     public int getReserveMax(){return  reserveMax;}
     public int getReserveActuelle(){return reserveActuelle;}
     public void setReserveActuelle(int aspiration){
-        System.out.println("J'aspire "+ aspiration +" poussiere");
+        System.out.println("J'aspire "+ aspiration +" poussiere /");
         if((reserveActuelle+aspiration)>reserveMax) {
             int oldReserve = reserveActuelle;
             reserveActuelle += aspiration;

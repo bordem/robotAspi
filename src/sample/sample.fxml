@@ -3,12 +3,41 @@
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="sample.Controller"
-            prefHeight="400.0" prefWidth="600.0">
 
-</AnchorPane>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ProgressBar?>
+<Group xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+       fx:controller="sample.Controller">
+    <children>
+        <Group fx:id="root"  >
+            <children>
+                <Button id="buttonBas" fx:id="Bas" mnemonicParsing="false"  text="Bas" onAction="#buttonDirectionBas"
+                layoutX="100" layoutY="325"/>
+                <Button id="buttonHaut" fx:id="Haut" mnemonicParsing="false" text="Haut" onAction="#buttonDirectionHaut"
+                layoutY="245" layoutX="100"/>
+                <Button id="buttonDroite" fx:id="Droite"  mnemonicParsing="false" text="Droite" onAction="#buttonDirectionDroite"
+                layoutX="165" layoutY="285"/>
+                <Button id="buttonGauche" fx:id="Gauche" mnemonicParsing="false" text="Gauche" onAction="#buttonDirectionGauche"
+                layoutX="25" layoutY="285"/>
+                <Button id="buttonStart" fx:id="Demarrer" mnemonicParsing="false" onAction="#initialiser"
+                    layoutX="300" layoutY="600"    text="Demarrer"/>
+                <Canvas fx:id="canvas" layoutX="440" height="800" width="540" />
+                <Circle fx:id="circle" radius="13" fill="white"/>
+
+                <Text fx:id="textTemps" layoutX="0" layoutY="25" text=" "><font><Font size="12"/></font></Text>
+                <Text fx:id="textDeplacement" layoutX="0" layoutY="50" text=" " ></Text>
+                <Text fx:id="textNBBase" layoutX="0" layoutY="75" text="Le robot est revenu a la base n fois :" ><font><Font size="12"/></font></Text>
+                <Text fx:id="textBatterie" layoutX="0" layoutY="100" text="Batterie :"><font><Font size="12"/></font></Text>
+                <Text fx:id="textReservoir" layoutX="0" layoutY="140" text="Reservoir a poussière :" ><font><Font size="12"/></font></Text>
+                <Text fx:id="textQuantitePoussiere" layoutX="0" layoutY="200" text="Le robot a aspiré : " ><font><Font size="12"/></font></Text>
+                <Button id="Option" fx:id="Option" mnemonicParsing="false" text="Option" onAction="#configuration"
+                layoutY="600" layoutX="25"/>
+            </children>
+        </Group>
+    </children>
+</Group>

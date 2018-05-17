@@ -23,18 +23,8 @@ public class Main {
             }
 
         }
-        Robot robot = new Robot(new Reserve(100),new Batterie(), sol);
-        try {
-            robot.deplacerRobot(Direction.BAS);
-            robot.deplacerRobot(Direction.DROITE);
-            robot.deplacerRobot(Direction.DROITE);
-            robot.deplacerRobot(Direction.BAS);
-            robot.deplacerRobot(Direction.DROITE);
-            robot.deplacerRobot(Direction.BAS);
-            robot.deplacerRobot(Direction.BAS);
-        }catch (BatterieException be){
-            be.printStackTrace();
-        }
+        Robot robot = new Robot(new Batterie(), sol);
+        robot.test();
 
     }
 }
